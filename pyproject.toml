@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "ticklist-mapper"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "ticklist_mapper"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+folium = "^0.14.0"
+beautifulsoup4 = "^4.11.2"
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^6.0.0"
+mypy = "^1.0.1"
+black = "^23.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
