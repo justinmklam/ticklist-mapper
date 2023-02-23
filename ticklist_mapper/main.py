@@ -33,11 +33,11 @@ if __name__ == "__main__":
     for coordinates, routes in all_routes.items():
         max_grade = 0
         tooltip = ""
-        popup = ""
+        popup = f"{routes[0].area}<br><br>"
         for route in routes:
             text = f"{route.grade}, {route.name}<br>"
             tooltip += text
-            popup += f"<a href={route.url} target='_blank'>{text}</a><br><br>"
+            popup += f"<a href={route.url} target='_blank'>{text}</a><br>"
 
             matches = re.search(r"v([0-9]+)", route.grade.lower())
             if matches and (grade := int(matches.group(1))) > max_grade:
