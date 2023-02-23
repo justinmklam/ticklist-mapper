@@ -1,8 +1,12 @@
 import re
 import requests
+import requests_cache
 
 from enum import Enum
 from typing import NamedTuple, Tuple
+
+
+requests_cache.install_cache('requests_cache')
 
 
 class SearchType(Enum):
