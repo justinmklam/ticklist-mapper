@@ -2,6 +2,7 @@ import re
 import folium
 
 from argparse import ArgumentParser
+from pathlib import Path
 from ticklist_mapper.mountainproject import get_route_info
 
 
@@ -12,6 +13,8 @@ if __name__ == "__main__":
 
     with open(args.filename, "r") as f:
         climbs = f.readlines()
+
+    output_filepath = str(Path("docs") / Path(Path(args.filename).stem + ".html"))
 
     m = folium.Map(location=[37.3352, -118.49894], zoom_start=12)
 
@@ -26,9 +29,6 @@ if __name__ == "__main__":
             all_routes[key].append(route)
         else:
             all_routes[key] = [route]
-
-        # if i > 5:
-        #     break
 
     for coordinates, routes in all_routes.items():
         max_grade = 0
@@ -68,4 +68,5 @@ if __name__ == "__main__":
             icon=folium.Icon(color=color, icon=icon),
         ).add_to(m)
 
-    m.save("index.html")
+    m.save(output_filepath)
+    print(f"Saved to {output_filepath}")
