@@ -6,7 +6,7 @@ from enum import Enum
 from typing import NamedTuple, Tuple
 
 
-requests_cache.install_cache('requests_cache')
+requests_cache.install_cache("requests_cache")
 
 
 class SearchType(Enum):
@@ -53,7 +53,18 @@ def search(query: str, search_type: SearchType = SearchType.route) -> dict:
     if not isinstance(data, list) and len(data) < 1:
         raise ValueError(f"No route found for query: '{query}'")
 
-    return data[0]["_source"]
+    if len(data) == 1:
+        return data[0]["_source"]
+
+    # If there are multiple results, try to find the one that's a boulder
+    for d in data:
+        if (
+            "boulder" in d["_source"]["description"].lower()
+            or "boulder" in d["_source"]["breadcrumbs"].lower()
+        ):
+            return d["_source"]
+
+    raise ValueError(f"No boulder route found for query: '{query}'")
 
 
 def get_area_from_breadcrumbs(breadcrumbs: str) -> str:
@@ -96,4 +107,5 @@ def get_route_info(route_query: str):
     )
 
 
-# get_route_info("The Ruckus (aka Seven Spanish Angels)")
+# route = get_route_info("north face direct bishop")
+# print(route)
