@@ -3,6 +3,7 @@ import statistics
 import folium
 
 from argparse import ArgumentParser
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from ticklist_mapper.mountainproject import get_route_info
 
@@ -10,20 +11,29 @@ from ticklist_mapper.mountainproject import get_route_info
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("filename")
+    parser.add_argument("area")
     args = parser.parse_args()
+
+    area = args.area
 
     with open(args.filename, "r") as f:
         climbs = f.readlines()
 
     output_filepath = str(Path("docs") / Path(Path(args.filename).stem + ".html"))
+    # all_routes = pickle.load(open("bishop.pickle", "rb"))
+
+    print("Requesting climbs...")
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        results = executor.map(
+            get_route_info,
+            [f"{climb.strip()} {area}" for climb in climbs]
+        )
 
     # Find coordinates to center the map at
     all_coords = [[], []]
     all_routes = {}
-    for i, climb in enumerate(climbs):
-        route = get_route_info(f"{climb} bishop")
-        print(i, route)
-
+    for route in results:
+        print(route)
         # Group routes if they're on the same boulder
         key = str(route.coordinates)
         if all_routes.get(key):
