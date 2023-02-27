@@ -1,4 +1,5 @@
 import re
+import statistics
 import folium
 
 from argparse import ArgumentParser
@@ -16,8 +17,8 @@ if __name__ == "__main__":
 
     output_filepath = str(Path("docs") / Path(Path(args.filename).stem + ".html"))
 
-    m = folium.Map(location=[37.3352, -118.49894], zoom_start=12)
-
+    # Find coordinates to center the map at
+    all_coords = [[], []]
     all_routes = {}
     for i, climb in enumerate(climbs):
         route = get_route_info(f"{climb} bishop")
@@ -29,6 +30,14 @@ if __name__ == "__main__":
             all_routes[key].append(route)
         else:
             all_routes[key] = [route]
+
+        all_coords[0].append(route.coordinates[0])
+        all_coords[1].append(route.coordinates[1])
+
+    # Use median since there might be outliers which we wouldn't want to include in the avg
+    centroid = [statistics.median(c) for c in all_coords]
+
+    m = folium.Map(location=centroid, zoom_start=12)
 
     for coordinates, routes in all_routes.items():
         max_grade = 0
