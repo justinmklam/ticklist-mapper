@@ -1,0 +1,33 @@
+<h2>Result</h2>
+<label for="url">Custom URL</label>
+<input id="url" style="width:98%" readonly value={{ persistent_url }}></input>
+
+<iframe width="100%" height="400px" src="{{ url_for('static', path=filepath) }}" ></iframe>
+
+<table>
+  <!-- table header -->
+  {% if routes %}
+  <tr>
+     {% for key in routes[0] %}
+     {% if key == 'url' %}
+     {% else %}
+     <th> {{ key }} </th>
+     {% endif %}
+     {% endfor %}
+  </tr>
+  {% endif %}
+
+  <!-- table rows -->
+  {% for dict_item in routes %}
+  <tr>
+     {% for key, value in dict_item.items() %}
+     {% if key == 'name' %}
+     <td> <a href="{{dict_item['url']}}" target="_blank">{{ value }}</a></td>
+     {% elif key == 'url' %}
+     {% else %}
+     <td> {{ value }} </td>
+     {% endif %}
+     {% endfor %}
+  </tr>
+  {% endfor %}
+</table>

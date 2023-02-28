@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block main_content %}
+
+<body>
+    <h1>
+        Ticklist Mapper
+    </h1>
+
+    <form id="search-climbs" hx-swap="innerHTML" hx-target="#search-climbs-result" hx-post="/search-climbs">
+        <input name="area" placeholder="Area (e.g. 'Bishop')" required></input>
+        <textarea name="climbs" placeholder="High Plains Drifter
+Green Wall Essential
+Iron Man Traverse
+..." required></textarea>
+        <button>Submit</button>
+    </form>
+
+    <div id="search-climbs-result"></div>
+
+</body>
+
+{% endblock %}

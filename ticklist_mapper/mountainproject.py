@@ -21,6 +21,9 @@ class Route(NamedTuple):
     coordinates: Tuple[float, float]
     url: str
 
+    def dict(self) -> dict:
+        return self._asdict()
+
 
 def search(query: str, search_type: SearchType = SearchType.route) -> dict:
     headers = {
