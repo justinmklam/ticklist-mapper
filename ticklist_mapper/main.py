@@ -10,13 +10,13 @@ from concurrent.futures import ThreadPoolExecutor
 from ticklist_mapper.mountainproject import Route, get_route_info
 
 
-def get_climbs(area, climb_list: List[str]):
+def get_climbs(area, climb_list: List[str]) -> List[Route]:
     with ThreadPoolExecutor(max_workers=8) as executor:
         routes = executor.map(
             get_route_info, [f"{climb.strip()} {area}" for climb in climb_list]
         )
 
-    return routes
+    return [route for route in routes if route is not None]
 
 
 def generate_map(climbs: List[Route]) -> folium.Map:

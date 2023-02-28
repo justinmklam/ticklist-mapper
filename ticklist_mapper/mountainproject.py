@@ -3,7 +3,7 @@ import requests
 import requests_cache
 
 from enum import Enum
-from typing import NamedTuple, Tuple
+from typing import NamedTuple, Tuple, Optional
 
 
 requests_cache.install_cache("requests_cache")
@@ -86,8 +86,15 @@ def get_coordinates(url: str) -> list:
     return [float(matches.group(1)), float(matches.group(2))]
 
 
-def get_route_info(route_query: str):
-    route_response = search(route_query, SearchType.route)
+def get_route_info(route_query: str) -> Optional[Route]:
+    try:
+        route_response = search(route_query, SearchType.route)
+    except ValueError as e:
+        print(e)
+        # TODO: Return an empty Route object instead so the user can be informed that a
+        # route wasn't found
+        return None
+
     area = get_area_from_breadcrumbs(route_response["breadcrumbs"])
 
     try:

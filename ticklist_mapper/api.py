@@ -54,14 +54,16 @@ async def basic_form(request: Request, area: str = Form(...), climbs: str = Form
     # TODO: Save to memory insead of file using m.get_root().render()
     m.save(filepath)
 
-    persistent_url = os.path.join(request._headers["origin"], f"?id={id}")
+    # Use this instead of url_for since flyctl doesn't seem to pass through proxy headers
+    # properly to the docker container
+    base_url = request._headers["origin"]
+    persistent_url = os.path.join(base_url, f"?id={id}")
 
-    # Remove static from filepath since url_for contains it already>
     return templates.TemplateResponse(
         "iframe.html",
         {
             "request": request,
-            "filepath": filepath.replace("static", ""),
+            "filepath": os.path.join(base_url, filepath),
             "routes": [route.dict() for route in routes],
             "persistent_url": persistent_url,
         },
