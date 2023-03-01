@@ -1,6 +1,6 @@
 <h2>Result</h2>
-<button onclick="copyToClipboard('url')">Copy URL</button>
-<input id="url" style="width:98%" readonly value={{ persistent_url }}></input>
+<button id="btn-copy-url" onclick="copyToClipboard('copy-url')">Copy URL</button>
+<input id="copy-url" style="width:98%" readonly value={{ persistent_url }}></input>
 
 <iframe width="100%" height="400px" src="{{ filepath }}" ></iframe>
 
@@ -33,7 +33,7 @@
 </table>
 
 <script>
-   function copyToClipboard(id) {
+function copyToClipboard(id) {
   // Get the text field
   var copyText = document.getElementById(id);
 
@@ -43,5 +43,15 @@
 
    // Copy the text inside the text field
   navigator.clipboard.writeText(copyText.value);
+
+   // User feedback when button is clicked
+   var copyTextBtn = document.getElementById("btn-" + id)
+   var last = copyTextBtn.innerHTML;
+   copyTextBtn.innerHTML = 'Copied!';
+   clicked = true;
+   setTimeout(function () {
+      copyTextBtn.innerHTML = last;
+      clicked = false;
+   }, 2000);
 }
 </script>
