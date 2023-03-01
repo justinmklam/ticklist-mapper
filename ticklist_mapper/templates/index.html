@@ -6,8 +6,9 @@
         Ticklist Mapper
     </h1>
 
-    <form id="search-climbs" hx-swap="innerHTML" hx-target="#search-climbs-result" hx-post="/search-climbs"
-        hx-indicator=".htmx-indicator" {% if area and climbs %} hx-trigger="load" {% endif %}>
+    <form id="search-climbs" name="search-climbs" hx-swap="innerHTML" hx-target="#search-climbs-result" hx-post="/search-climbs"
+        hx-indicator=".htmx-indicator">
+        <!-- TODO: Submit button on load if id is in url, but also allow other climbs to be added after-->
         <input
             name="area"
             placeholder="Area (e.g. 'Bishop')"
