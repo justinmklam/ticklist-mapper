@@ -1,3 +1,4 @@
+import hashlib
 import os
 import json
 import traceback
@@ -19,8 +20,8 @@ if not os.path.exists(TMP_DIR):
     os.makedirs(TMP_DIR)
 
 
-def encode(data: dict) -> str:
-    return b64encode(json.dumps(data).encode("utf-8")).decode("utf-8")
+def encode(data: dict) -> bytes:
+    return b64encode(json.dumps(data).encode("utf-8"))
 
 
 def decode(string: str) -> dict:
@@ -29,22 +30,24 @@ def decode(string: str) -> dict:
 
 @app.get("/")
 async def root(request: Request, id: str = None):
-    # TODO: Preload page with climbs if a saved state is provided
+    payload = {
+        "request": request
+    }
+
     if id:
         data = decode(id)
-        # TODO": Update encode/decode functions to properly serialize lists
-        data["climbs"] = data["climbs"].split("\n")
-        print(data)
+        payload["area"] = data["area"]
+        payload["climbs"] = data["climbs"]
 
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("index.html", payload)
 
 
 @app.post("/search-climbs")
 async def basic_form(request: Request, area: str = Form(...), climbs: str = Form(...)):
     try:
+        climbs = climbs.strip()
         climb_list = climbs.split("\n")
         routes = get_climbs(area, climb_list)
-
         routes = list(routes)
 
         if not routes:
@@ -59,9 +62,9 @@ async def basic_form(request: Request, area: str = Form(...), climbs: str = Form
 
         m = generate_map(routes)
 
-        data = {"area": area, "climbs": climbs}
+        data = {"area": area.strip(), "climbs": climbs.strip()}
         id = encode(data)
-        filepath = os.path.join(TMP_DIR, f"{id}.html")
+        filepath = os.path.join(TMP_DIR, f"{hashlib.sha256(id).hexdigest()}.html")
 
         # TODO: Save to memory insead of file using m.get_root().render()
         m.save(filepath)
@@ -69,7 +72,7 @@ async def basic_form(request: Request, area: str = Form(...), climbs: str = Form
         # Use this instead of url_for since flyctl doesn't seem to pass through proxy headers
         # properly to the docker container
         base_url = request._headers["origin"]
-        persistent_url = os.path.join(base_url, f"?id={id}")
+        persistent_url = os.path.join(base_url, f"?id={id.decode('utf-8')}")
 
         return templates.TemplateResponse(
             "iframe.html",

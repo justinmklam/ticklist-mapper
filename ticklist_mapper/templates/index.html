@@ -7,12 +7,18 @@
     </h1>
 
     <form id="search-climbs" hx-swap="innerHTML" hx-target="#search-climbs-result" hx-post="/search-climbs"
-        hx-indicator=".htmx-indicator">
-        <input name="area" placeholder="Area (e.g. 'Bishop')" required></input>
-        <textarea name="climbs" placeholder="High Plains Drifter
+        hx-indicator=".htmx-indicator" {% if area and climbs %} hx-trigger="load" {% endif %}>
+        <input
+            name="area"
+            placeholder="Area (e.g. 'Bishop')"
+            required
+            {% if area %}value="{{area}}" {% endif %}
+        ></input>
+        <textarea name="climbs"
+        placeholder="High Plains Drifter
 Green Wall Essential
 Iron Man Traverse
-..." required></textarea>
+..." required>{% if climbs %}{{climbs}}{% endif %}</textarea>
         <button>Submit</button>
     </form>
 
