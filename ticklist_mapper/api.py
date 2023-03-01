@@ -1,5 +1,6 @@
 import os
 import json
+import traceback
 from base64 import b64decode, b64encode
 from fastapi import FastAPI, Request, Form
 from fastapi.staticfiles import StaticFiles
@@ -40,31 +41,51 @@ async def root(request: Request, id: str = None):
 
 @app.post("/search-climbs")
 async def basic_form(request: Request, area: str = Form(...), climbs: str = Form(...)):
-    climb_list = climbs.split("\n")
-    routes = get_climbs(area, climb_list)
+    try:
+        climb_list = climbs.split("\n")
+        routes = get_climbs(area, climb_list)
 
-    routes = list(routes)
+        routes = list(routes)
 
-    m = generate_map(routes)
+        if not routes:
+            return templates.TemplateResponse(
+                "message.html",
+                {
+                    "request": request,
+                    "title": "Result",
+                    "msg": "No routes found.",
+                },
+            )
 
-    data = {"area": area, "climbs": climbs}
-    id = encode(data)
-    filepath = os.path.join(TMP_DIR, f"{id}.html")
+        m = generate_map(routes)
 
-    # TODO: Save to memory insead of file using m.get_root().render()
-    m.save(filepath)
+        data = {"area": area, "climbs": climbs}
+        id = encode(data)
+        filepath = os.path.join(TMP_DIR, f"{id}.html")
 
-    # Use this instead of url_for since flyctl doesn't seem to pass through proxy headers
-    # properly to the docker container
-    base_url = request._headers["origin"]
-    persistent_url = os.path.join(base_url, f"?id={id}")
+        # TODO: Save to memory insead of file using m.get_root().render()
+        m.save(filepath)
 
-    return templates.TemplateResponse(
-        "iframe.html",
-        {
-            "request": request,
-            "filepath": os.path.join(base_url, filepath),
-            "routes": [route.dict() for route in routes],
-            "persistent_url": persistent_url,
-        },
-    )
+        # Use this instead of url_for since flyctl doesn't seem to pass through proxy headers
+        # properly to the docker container
+        base_url = request._headers["origin"]
+        persistent_url = os.path.join(base_url, f"?id={id}")
+
+        return templates.TemplateResponse(
+            "iframe.html",
+            {
+                "request": request,
+                "filepath": os.path.join(base_url, filepath),
+                "routes": [route.dict() for route in routes],
+                "persistent_url": persistent_url,
+            },
+        )
+    except Exception as e:
+        return templates.TemplateResponse(
+            "message.html",
+            {
+                "request": request,
+                "title": "Internal Server Error!",
+                "msg": "\n".join(traceback.format_exception(e)),
+            },
+        )
