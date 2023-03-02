@@ -67,9 +67,9 @@ def generate_map(climbs: List[Route]) -> folium.Map:
         # Show a different marker colour based on the boulder's max grade
         if max_grade <= 3:
             color = "green"
-        elif max_grade <= 6:
+        elif max_grade <= 5:
             color = "blue"
-        elif max_grade <= 9:
+        elif max_grade <= 8:
             color = "orange"
         else:
             color = "red"
