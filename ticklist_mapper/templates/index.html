@@ -11,15 +11,12 @@
         <!-- TODO: Submit button on load if id is in url, but also allow other climbs to be added after-->
         <input
             name="area"
-            placeholder="Area (e.g. 'Bishop')"
+            placeholder="Area (e.g. Bishop)"
             required
             {% if area %}value="{{area}}" {% endif %}
         ></input>
         <textarea name="climbs"
-        placeholder="High Plains Drifter
-Green Wall Essential
-Iron Man Traverse
-..." required>{% if climbs %}{{climbs}}{% endif %}</textarea>
+        placeholder="Enter each climb name on a new line" required>{% if climbs %}{{climbs}}{% endif %}</textarea>
         <button>Submit</button>
     </form>
 
