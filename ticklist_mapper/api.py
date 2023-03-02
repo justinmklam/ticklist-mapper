@@ -2,6 +2,7 @@ import hashlib
 import os
 import json
 import traceback
+import time
 from base64 import b64decode, b64encode
 from fastapi import FastAPI, Request, Form
 from fastapi.staticfiles import StaticFiles
@@ -20,6 +21,18 @@ if not os.path.exists(TMP_DIR):
     os.makedirs(TMP_DIR)
 
 
+def delete_old_files(path: str, num_days: int = 7):
+    SECONDS_PER_DAY = 86400
+    for f in os.listdir(path):
+        filepath = os.path.join(path, f)
+        if os.stat(filepath).st_mtime < time.time() - num_days * SECONDS_PER_DAY:
+            print(f"Deleting {filepath}")
+            try:
+                os.remove(filepath)
+            except Exception as e:
+                print(f"Could not delete {filepath}: {e}")
+
+
 def encode(data: dict) -> bytes:
     return b64encode(json.dumps(data).encode("utf-8"))
 
@@ -31,6 +44,8 @@ def decode(string: str) -> dict:
 @app.get("/")
 @app.get("/{id}")
 async def root(request: Request, id: str = None):
+    delete_old_files(TMP_DIR, num_days=3)
+
     payload = {
         "request": request
     }
