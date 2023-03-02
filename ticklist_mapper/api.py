@@ -43,7 +43,6 @@ def decode(string: str) -> dict:
 
 
 @app.get("/")
-@app.get("/{id}")
 async def root(request: Request, id: str = None):
     delete_old_files(TMP_DIR, num_days=3)
 
@@ -87,7 +86,7 @@ async def basic_form(request: Request, area: str = Form(...), climbs: str = Form
         # Use this instead of url_for since flyctl doesn't seem to pass through proxy headers
         # properly to the docker container
         base_url = request._headers["origin"]
-        persistent_url = os.path.join(base_url, f"{id.decode('utf-8')}")
+        persistent_url = os.path.join(base_url, f"?id={id.decode('utf-8')}")
 
         return templates.TemplateResponse(
             "iframe.html",
