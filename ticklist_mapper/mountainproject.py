@@ -1,10 +1,9 @@
 import re
+from enum import Enum
+from typing import NamedTuple, Optional, Tuple
+
 import requests
 import requests_cache
-
-from enum import Enum
-from typing import NamedTuple, Tuple, Optional
-
 
 requests_cache.install_cache("requests_cache")
 
@@ -20,6 +19,7 @@ class Route(NamedTuple):
     area: str
     coordinates: Tuple[float, float]
     url: str
+    area_url: Optional[str]
 
     def dict(self) -> dict:
         return self._asdict()
@@ -96,12 +96,14 @@ def get_route_info(route_query: str) -> Optional[Route]:
         return None
 
     area = get_area_from_breadcrumbs(route_response["breadcrumbs"])
+    area_url = None
 
     try:
         # Not sure why the coordinates in the area response are wrong... need to get it from
         # the url page instead
         area_response = search(area, SearchType.area)
         coordinates = get_coordinates(area_response["url"])
+        area_url = area_response.get("url")
     except Exception as e:
         print(f"Couldn't get coordinates: {e}")
         # Fallback to using the ones in the route
@@ -114,6 +116,7 @@ def get_route_info(route_query: str) -> Optional[Route]:
         area=area,
         coordinates=coordinates,
         url=route_response["url"],
+        area_url=area_url,
     )
 
 

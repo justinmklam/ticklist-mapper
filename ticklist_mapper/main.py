@@ -1,12 +1,13 @@
 # import pickle
 import re
 import statistics
-import folium
-
 from argparse import ArgumentParser
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import List
-from concurrent.futures import ThreadPoolExecutor
+
+import folium
+
 from ticklist_mapper.mountainproject import Route, get_route_info
 
 
@@ -53,7 +54,7 @@ def generate_map(climbs: List[Route]) -> folium.Map:
     for coordinates, routes in all_routes.items():
         max_grade = 0
         tooltip = ""
-        popup = f"{routes[0].area}<br><br>"
+        popup = f"<a href={routes[0].area_url} target='_blank'>{routes[0].area}</a><br><br>"
         for route in routes:
             text = f"{route.grade}, {route.name}<br>"
             tooltip += text

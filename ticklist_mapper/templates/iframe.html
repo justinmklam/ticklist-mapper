@@ -9,7 +9,7 @@
   {% if routes %}
   <tr>
      {% for key in routes[0] %}
-     {% if key == 'url' %}
+     {% if key in ['url', 'area_url'] %}
      {% else %}
      <th> {{ key }} </th>
      {% endif %}
@@ -23,7 +23,9 @@
      {% for key, value in dict_item.items() %}
      {% if key == 'name' %}
      <td> <a href="{{dict_item['url']}}" target="_blank">{{ value }}</a></td>
-     {% elif key == 'url' %}
+     {% elif key == 'area' %}
+     <td> <a href="{{dict_item['area_url']}}" target="_blank">{{ value }}</a></td>
+     {% elif key in ['url', 'area_url'] %}
      {% else %}
      <td> {{ value }} </td>
      {% endif %}
