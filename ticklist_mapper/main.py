@@ -54,11 +54,13 @@ def generate_map(climbs: List[Route]) -> folium.Map:
     for coordinates, routes in all_routes.items():
         max_grade = 0
         tooltip = ""
-        popup = f"<a href={routes[0].area_url} target='_blank'>{routes[0].area}</a><br><br>"
+        popup = (
+            f"<a href={routes[0].area_url} target='_blank'>{routes[0].area}</a><br><br>"
+        )
         for route in routes:
             text = f"{route.grade}, {route.name}<br>"
             tooltip += text
-            popup += f"<a href={route.url} target='_blank'>{text}</a><br>"
+            popup += f"<a href={route.url} target='_blank'>{text}</a> <a href={route.youtube_beta_url} target='_blank'>(beta)</a><br>"
 
             matches = re.search(r"v([0-9]+)", route.grade.lower())
             if matches and (grade := int(matches.group(1))) > max_grade:

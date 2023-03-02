@@ -1,4 +1,5 @@
 import re
+import urllib.parse
 from enum import Enum
 from typing import NamedTuple, Optional, Tuple
 
@@ -22,7 +23,15 @@ class Route(NamedTuple):
     area_url: Optional[str]
 
     def dict(self) -> dict:
-        return self._asdict()
+        d = self._asdict()
+        # TODO: Figure out a more dynamic way to add propertyies to the dict
+        d["youtube_beta_url"] = self.youtube_beta_url
+        return d
+
+    @property
+    def youtube_beta_url(self) -> str:
+        query = urllib.parse.quote_plus(f"{self.name} {self.grade}")
+        return f"https://www.youtube.com/results?search_query={query}"
 
 
 def search(query: str, search_type: SearchType = SearchType.route) -> dict:

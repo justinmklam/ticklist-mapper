@@ -10,4 +10,4 @@ def test_get_route():
     assert route.area == "Monkey Boy Area"
     assert route.url is not None
     assert route.area_url is not None
-
+    assert isinstance(route.dict(), dict)
