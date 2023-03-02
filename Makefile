@@ -2,6 +2,13 @@ install:
 	poetry install
 	poetry env info
 
+format:
+	poetry run isort .
+	poetry run black .
+
+test:
+	poetry run pytest tests/
+
 serve:
 	poetry run uvicorn ticklist_mapper.api:app --reload --host 0.0.0.0
 

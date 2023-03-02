@@ -1,14 +1,15 @@
 import hashlib
-import os
 import json
-import traceback
+import os
 import time
+import traceback
 from base64 import b64decode, b64encode
-from fastapi import FastAPI, Request, Form
+
+from fastapi import FastAPI, Form, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from ticklist_mapper.main import get_climbs, generate_map
+from ticklist_mapper.main import generate_map, get_climbs
 
 TMP_DIR = "static/tmp"
 
@@ -46,9 +47,7 @@ def decode(string: str) -> dict:
 async def root(request: Request, id: str = None):
     delete_old_files(TMP_DIR, num_days=3)
 
-    payload = {
-        "request": request
-    }
+    payload = {"request": request}
 
     if id:
         data = decode(id)

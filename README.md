@@ -12,6 +12,9 @@ Check it out at [ticklistmapper.fly.dev](https://ticklistmapper.fly.dev/)!
 # Install dependencies
 make install
 
+# Run tests
+make test
+
 # Start the local server
 make serve
 ```
