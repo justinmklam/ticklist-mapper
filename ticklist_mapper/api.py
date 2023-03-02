@@ -94,7 +94,9 @@ async def basic_form(request: Request, area: str = Form(...), climbs: str = Form
             {
                 "request": request,
                 "filepath": os.path.join(base_url, filepath),
-                "routes": [route.dict() for route in routes],
+                "routes": sorted(
+                    [route.dict() for route in routes], key=lambda d: d["area"]
+                ),
                 "persistent_url": persistent_url,
             },
         )
