@@ -25,11 +25,11 @@
     <div id="search-climbs-result"></div>
 
     {% if area and climbs %}
-    <script defer>
+    <script>
         // Submit form on load if climbs are populated from the url's saved state
-        window.onload = function() {
+        window.addEventListener("load", (event) => {
             document.getElementById("btn-submit").click()
-        }
+        })
     </script>
     {% endif %}
 </body>
