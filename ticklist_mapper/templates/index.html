@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block main_content %}
+
+<body>
+    <h1>
+        Ticklist Mapper
+    </h1>
+
+    <form id="search-climbs" name="search-climbs" hx-swap="innerHTML" hx-target="#search-climbs-result" hx-post="/search-climbs"
+        hx-indicator=".htmx-indicator">
+        <!-- TODO: Submit button on load if id is in url, but also allow other climbs to be added after-->
+        <input
+            name="area"
+            placeholder="Area (e.g. Bishop)"
+            required
+            {% if area %}value="{{area}}" {% endif %}
+        ></input>
+        <textarea name="climbs"
+        placeholder="Enter each climb name on a new line" required>{% if climbs %}{{climbs}}{% endif %}</textarea>
+        <button>Submit</button>
+    </form>
+
+    <span class="htmx-indicator">
+        <img src="/static/img/bars.svg" /> Loading...
+    </span>
+    <div id="search-climbs-result"></div>
+
+</body>
+
+{% endblock %}

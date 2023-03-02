@@ -1,29 +1,40 @@
+# import pickle
 import re
 import statistics
 import folium
 
 from argparse import ArgumentParser
 from pathlib import Path
-from ticklist_mapper.mountainproject import get_route_info
+from typing import List
+from concurrent.futures import ThreadPoolExecutor
+from ticklist_mapper.mountainproject import Route, get_route_info
 
 
-if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument("filename")
-    args = parser.parse_args()
+def get_climbs(area, climb_list: List[str]) -> List[Route]:
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        routes = executor.map(
+            get_route_info, [f"{climb.strip()} {area}" for climb in climb_list]
+        )
 
-    with open(args.filename, "r") as f:
-        climbs = f.readlines()
+    return [route for route in routes if route is not None]
 
-    output_filepath = str(Path("docs") / Path(Path(args.filename).stem + ".html"))
+
+def generate_map(climbs: List[Route]) -> folium.Map:
+    # import pickle
+    # all_routes = pickle.load(open("bishop.pickle", "rb"))
+    # centroid = [37.41588, -118.45133]
+
+    # print("Requesting climbs...")
+    # with ThreadPoolExecutor(max_workers=8) as executor:
+    #     results = executor.map(
+    #         get_route_info, [f"{climb.strip()} {area}" for climb in climbs]
+    #     )
 
     # Find coordinates to center the map at
     all_coords = [[], []]
     all_routes = {}
-    for i, climb in enumerate(climbs):
-        route = get_route_info(f"{climb} bishop")
-        print(i, route)
-
+    for route in climbs:
+        print(route)
         # Group routes if they're on the same boulder
         key = str(route.coordinates)
         if all_routes.get(key):
@@ -77,5 +88,25 @@ if __name__ == "__main__":
             icon=folium.Icon(color=color, icon=icon),
         ).add_to(m)
 
+    return m
+
+
+if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument("filename")
+    parser.add_argument("area")
+    args = parser.parse_args()
+
+    area = args.area
+
+    with open(args.filename, "r") as f:
+        climbs = f.readlines()
+
+    output_filepath = str(Path("docs") / Path(Path(args.filename).stem + ".html"))
+    routes = get_climbs(area, climbs)
+    m = generate_map(args.area, routes)
+
     m.save(output_filepath)
     print(f"Saved to {output_filepath}")
+
+    # pickle.dump(all_routes, open("bishop.pickle", "wb"))
