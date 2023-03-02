@@ -110,9 +110,12 @@ def get_route_info(route_query: str) -> Optional[Route]:
     try:
         # Not sure why the coordinates in the area response are wrong... need to get it from
         # the url page instead
-        area_response = search(area, SearchType.area)
-        coordinates = get_coordinates(area_response["url"])
-        area_url = area_response.get("url")
+        page_response = requests.get(route_response["url"])
+        # Find all urls in breadcrumbs, and get the last one
+        regex = r"(?:<a href=\")(.*mountainproject.com\/area\/.*)(?:\">)"
+        matches = re.findall(regex, page_response.content.decode("utf-8"))
+        area_url = matches[-1]
+        coordinates = get_coordinates(area_url)
     except Exception as e:
         print(f"Couldn't get coordinates: {e}")
         # Fallback to using the ones in the route
