@@ -3,10 +3,10 @@ install:
 	poetry env info
 
 serve:
-	poetry run uvicorn ticklist_mapper.api:app --reload
+	poetry run uvicorn ticklist_mapper.api:app --reload --host 0.0.0.0
 
 deploy:
-	flyctl deploy
+	fly deploy
 
 docker-build:
 	docker build -t ticklistmapper .
