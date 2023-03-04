@@ -88,6 +88,9 @@ async def basic_form(request: Request, area: str = Form(...), climbs: str = Form
         base_url = request._headers["origin"]
         persistent_url = os.path.join(base_url, f"?id={id.decode('utf-8')}")
 
+        # Remove single quotes since it doesn't render in html title
+        area = area.replace("'", "").title()
+
         return templates.TemplateResponse(
             "iframe.html",
             {
@@ -97,6 +100,10 @@ async def basic_form(request: Request, area: str = Form(...), climbs: str = Form
                     [route.dict() for route in routes], key=lambda d: d["area"]
                 ),
                 "persistent_url": persistent_url,
+                "metadata": {
+                    "title": f"Ticklist Mapper | {area}",
+                    "description": f"{len(routes)} routes in {area}",
+                }
             },
         )
     except Exception as e:

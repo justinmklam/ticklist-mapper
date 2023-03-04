@@ -61,5 +61,6 @@ function copyToClipboard(id) {
 
 function onResultLoad() {
    window.history.replaceState('data', 'New Routes', '{{ persistent_url }}');
+   document.title = decodeURI("{{ metadata['title']}}");
 }
 </script>
