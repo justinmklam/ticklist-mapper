@@ -2,7 +2,7 @@
 <button id="btn-copy-url" onclick="copyToClipboard('copy-url')">Copy URL</button>
 <input id="copy-url" style="width:98%" readonly value={{ persistent_url }}></input>
 
-<iframe width="100%" height="400px" src="{{ filepath }}" ></iframe>
+<iframe onload="onResultLoad()" width="100%" height="400px" src="{{ filepath }}" ></iframe>
 
 <table>
   <!-- table header -->
@@ -57,5 +57,9 @@ function copyToClipboard(id) {
       copyTextBtn.innerHTML = last;
       clicked = false;
    }, 2000);
+}
+
+function onResultLoad() {
+   window.history.replaceState('data', 'New Routes', '{{ persistent_url }}');
 }
 </script>
